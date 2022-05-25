@@ -9,7 +9,7 @@
     <script src="js/hide-on-play.js"></script>
   </head>
   <body>
-    <a-scene>
+    <a-scene background="color: black">
       <a-assets>
         <video id="video1" preload="auto"
                src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_1.mp4"
@@ -19,42 +19,129 @@
                src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_2.mp4"
                width="160" height="90" autoplay loop="true"
                crossOrigin="anonymous" muted></video>
+        <video id="video3" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_3.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video4" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_4.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video5" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_5.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video6" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_6.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video7" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_7.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video8" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_8.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video9" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_9.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video10" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_10.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
       </a-assets>
 
-      <!--
-      SOURCE
-      Title:  Big Buck Bunny
-      Author: Blender Institute
-      URL:    https://peach.blender.org/
-      -->
+     
       <a-entity material="shader: flat; src: #video1"
                 geometry="primitive: plane; width: 160; height: 90;"
-                position="0 60 -250"
-                rotation="0 35 0"
+                position="-160 0 -240"
+                rotation="0 0 0"
                 play-on-click
                 visible="false">
       </a-entity>
 
-      <!--
-      SOURCE
-      Title:  Fireworks
-      Author: Motion Digital
-      URL:    https://www.videvo.net/profile/motiondigital/
-      -->
+    
       <a-entity material="shader: flat; src: #video2"
                 geometry="primitive: plane; width: 160; height: 90"
-                position="0 -60 -200"
-                rotation="0 -35 0"
+                position="0 0 -240"
+                rotation="0 0 0"
                 play-on-click
                 visible="false">
       </a-entity>
+      
+      <a-entity material="shader: flat; src: #video3"
+                geometry="primitive: plane; width: 160; height: 90"
+                position="80 0 -160"
+                rotation="0 -90 0"
+                play-on-click
+                visible="false">
+      </a-entity>
+      
+        <a-entity material="shader: flat; src: #video4"
+                geometry="primitive: plane; width: 160; height: 90"
+                position="80 0 0"
+                rotation="0 -90 0"
+                play-on-click
+                visible="false">
+      </a-entity>
+      
+        <a-entity material="shader: flat; src: #video5"
+                geometry="primitive: plane; width: 160; height: 90"
+                position="80 0 160"
+                rotation="0 -90 0"
+                play-on-click
+                visible="false">
+      </a-entity>
+      
+       <a-entity material="shader: flat; src: #video6"
+                geometry="primitive: plane; width: 160; height: 90"
+                position="0 0 240"
+                rotation="0 -180 0"
+                play-on-click
+                visible="false">
+      </a-entity>
+      
+      <a-entity material="shader: flat; src: #video7"
+                geometry="primitive: plane; width: 160; height: 90"
+                position="-160 0 240"
+                rotation="0 -180 0"
+                play-on-click
+                visible="false">
+      </a-entity>
+      
+      <a-entity material="shader: flat; src: #video8"
+                geometry="primitive: plane; width: 160; height: 90"
+                position="-160 0 160"
+                rotation="0 -270 0"
+                play-on-click
+                visible="false">
+      </a-entity>
+      
+      <a-entity material="shader: flat; src: #video9"
+                geometry="primitive: plane; width: 160; height: 90"
+                position="-160 0 0"
+                rotation="0 -270 0"
+                play-on-click
+                visible="false">
+      </a-entity>
+      
+      <a-entity material="shader: flat; src: #video10"
+                geometry="primitive: plane; width: 160; height: 90"
+                position="-160 0 -160"
+                rotation="0 -270 0"
+                play-on-click
+                visible="false">
+      </a-entity>
+      
       <a-camera>
         <a-entity
           position="0 0 -1.5"
           text="align: center;
                 width: 6;
                 wrapCount: 100;
-                color: black;
+                color: white;
                 value: Click or tap to start video"
           hide-on-play="#video2">
         </a-entity>
