@@ -7,18 +7,19 @@
     <script src="dist/aframe-master.js"></script>
     <script src="js/play-on-click.js"></script>
     <script src="js/hide-on-play.js"></script>
-    <!--  <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script> -->
-      <script src="https://cdn.jsdelivr.net/npm/resonance-audio/build/resonance-audio.min.js"></script>
-      <script src="https://cdn.rawgit.com/etiennepinchon/aframe-resonance/master/dist/aframe-resonance.min.js"></script>
+    <script src="./audio-toggle.js"></script>
   </head>
   <body>
     <a-scene background="color: black">
       <a-assets>
-        <audio id="audio1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg"></audio>
-        <audio id="audio1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg"></audio>
-        <audio id="audio1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg"></audio>
-        <audio id="audio1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg"></audio>
-        <audio id="fryingEgg" src="./assets/audio/frying_egg.mp3"></audio>
+        <audio id="audio1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg" loop="true" ></audio>
+        <audio id="audio2" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/2.ogg"></audio>
+        <audio id="audio3" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/3.ogg"></audio>
+        <audio id="audio4" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/4.ogg"></audio>
+        <audio id="audio5" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/5.ogg"></audio>
+        <audio id="audio6" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/6.ogg"></audio>
+        <audio id="audio7" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/7.ogg"></audio>
+        <audio id="audio8" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/8.ogg"></audio>
         <video id="video1" preload="auto"
                src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_1.mp4"
                width="160" height="90" autoplay loop="true"
@@ -63,10 +64,12 @@
 
      
       <a-entity material="shader: flat; src: #video1"
+                sound="src: #audio1; volume: 10;"
                 geometry="primitive: plane; width: 160; height: 90;"
                 position="-160 0 -240"
                 rotation="0 0 0"
                 play-on-click
+                audio-toggle
                 visible="false">
       </a-entity>
 
@@ -143,22 +146,10 @@
                 visible="false">
       </a-entity>
       
-      <a-resonance-room
-        src-position="-160 0 -240"
-        src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.mp3"
-        loop="true",
-        autoplay="true",
-        width="50"
-        height="45"
-        depth="50"
-        helper="true"
-        left-wall="curtain-heavy"
-        right-wall="curtain-heavy"
-        front-wall="curtain-heavy"
-        back-wall="curtain-heavy"
-        down-wall="curtain-heavy"
-        up-wall="curtain-heavy"
-        ><a-resonance-room>
+     <!-- <a-entity sound="src: #audio1; volume: 1"
+                position="0 0 0"
+                rotation="0 45 0" scale="100 100 100" audio-toggle="playing: true" play-on-click loop="true"> -->
+      </a-entity>
       
       <a-camera>
         <a-entity
