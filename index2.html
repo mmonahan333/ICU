@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>RML Video Player Take 2</title>
+	<meta name="description" content="A-Frame Examples">
+        <script src="dist/aframe-master.js"></script>
+        <script src="js/play-on-click.js"></script>
+        <script src="js/hide-on-play.js"></script>
+
+<style>
+.mainUI
+{
+	position: fixed; 
+	top: 0px;  
+	width:100%; height:100%; 
+	z-index: 1; 
+	pointer-events: none; /* allow click-through in transparent areas */
+	display: flex;
+	align-items: center;
+  	justify-content: center;
+}
+
+.regionUI
+{
+	position: absolute; 
+	display: flex;
+	flex-direction: row;
+	pointer-events: none;
+}
+
+.buttonUI
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	pointer-events: auto;	
+	filter: drop-shadow(0px 0px 20px white);
+}
+</style>
+</head>
+
+<body>
+
+<!-- div used for enter button (user interaction to trigger audio) and fade-in -->
+<div class="mainUI" id="uiDiv" oncontextmenu="return false;">
+	<div class="regionUI">
+		<div class="buttonUI">
+    	<img src="images/buttons/enter.png" id="buttonEnter" />
+		</div>
+	</div>
+</div>
+
+<script>
+
+/* function randomNormal(min, max)
+{
+	let rand = 0;
+	for (let n = 0; n < 6; n++)
+		rand += Math.random();
+	return min + (max - min) * (rand / 6);
+}
+
+function randomUniform(min, max)
+{
+	return min + (max - min) * Math.random();
+}
+
+AFRAME.registerComponent('spawner', 
+{
+	init: function()
+	{
+		this.sceneElement = document.querySelector('a-scene');
+	},
+
+	tick: function(time, deltaTime) // deltaTime: milliseconds
+	{
+		let deltaSeconds = deltaTime/1000;
+		let eventFrequency = 0.75;
+
+		if ( Math.random() < eventFrequency * deltaSeconds )
+		{
+			console.log( "Firework!" );
+			let angle = THREE.Math.degToRad(270);
+			let angleSpread = THREE.Math.degToRad(90);
+			let angleRadians = angle + randomNormal(-angleSpread, angleSpread); 
+			let radius = 9;
+			let x = radius * Math.cos(angleRadians);
+			let y = 0;
+			let z = radius * Math.sin(angleRadians);
+
+			let firework = document.createElement("a-entity");
+			firework.setAttribute("firework", "");
+			firework.setAttribute("position", {"x":x, "y":y, "z":z} );
+
+			// random flight parameters
+			let maxHeight = randomNormal(4, 8);
+			firework.setAttribute("firework", "maxHeight", maxHeight );
+			let riseTime = randomNormal(2, 3);
+			firework.setAttribute("firework", "riseTime", riseTime );
+			this.sceneElement.appendChild( firework );
+
+			// chance of multi-firework
+			// 0.10 = 1/10 double, 1/100 triple, 1/1000 quadruple, etc.
+			// 0.20 =  1/5 double,  1/25 triple,  1/125 quadruple, etc.
+			while ( Math.random() < 0.15 )
+			{
+				let fireworkExtra = document.createElement("a-entity");
+				fireworkExtra.setAttribute("firework", "");
+				// synchronize position, height, time to explosion
+				fireworkExtra.setAttribute("position", {"x":x, "y":y, "z":z} );
+				fireworkExtra.setAttribute("firework", "maxHeight", maxHeight );
+				fireworkExtra.setAttribute("firework", "riseTime", riseTime );
+				this.sceneElement.appendChild( fireworkExtra );
+			}
+		}
+	}
+});
+
+AFRAME.registerComponent('firework', 
+{
+	schema: 
+	{
+		color:  {type: 'string', default: ""},
+		maxHeight: {type: 'number', default: 4.5},
+		riseTime: {type: 'number', default: 2.5}	// time to reach maxHeight
+	},
+
+	randomColor: function()
+	{
+		let colorList = ["red", "orange", "gold", "green", "cyan", "#0088FF", "violet"];
+		let colorIndex = Math.floor( colorList.length * Math.random() );
+		return colorList[colorIndex];
+	},
+
+	init: function()
+	{	
+		// set random color if none already set
+		if ( this.data.color == "" )
+			this.data.color = this.randomColor();
+
+		// set up movement animation
+		let p = this.el.object3D.position;
+		this.el.setAttribute("animation__position", "property", "position");
+		this.el.setAttribute("animation__position", "from", {"x":p.x, "y":p.y, "z":p.z});
+		this.el.setAttribute("animation__position", "to", {"x":p.x, "y":p.y + this.data.maxHeight, "z":p.z});
+		this.el.setAttribute("animation__position", "dur", this.data.riseTime * 1000);
+		this.el.setAttribute("animation__position", "easing", "easeOutQuad");  // fast at start, then slower
+		
+		// trail effect ----------------------------------------------------------
+
+        this.particleTrail = document.createElement("a-image");
+        this.particleTrail.setAttribute("position", "0 -0.1 0");
+        this.particleTrail.setAttribute("width", "0.5");
+        this.particleTrail.setAttribute("height", "0.5");
+        this.particleTrail.setAttribute("scale", "1 1 1");
+        
+        this.particleTrail.setAttribute("src", "#fireballSheet");
+
+        this.particleTrail.setAttribute("spritesheet-animation", "rows: 1; columns: 8; frameDuration: 0.08; loop: true;");
+
+		this.particleTrail.setAttribute("material", "blending: additive; transparent: true; opacity: 1;");
+		
+		
+        this.particleTrail.setAttribute("animation__fade", "property", "material.opacity");
+		this.particleTrail.setAttribute("animation__fade", "from", 1.0);
+		this.particleTrail.setAttribute("animation__fade", "to", 0.2);
+		this.particleTrail.setAttribute("animation__fade", "dur", this.data.riseTime * 1000);
+		this.particleTrail.setAttribute("animation__fade", "easing", "easeOutQuad");  // slow at start, then fast
+		
+
+        this.particleTrail.setAttribute("animation__shrink", "property", "scale");
+		this.particleTrail.setAttribute("animation__shrink", "from", "1 1 1");
+		this.particleTrail.setAttribute("animation__shrink", "to", "0.25 0.25 0.25");
+		this.particleTrail.setAttribute("animation__shrink", "dur", this.data.riseTime * 1000);
+		this.particleTrail.setAttribute("animation__shrink", "easing", "easeOutQuad");  // slow at start, then fast
+
+		this.el.appendChild(this.particleTrail);
+
+		// burst effect ----------------------------------------------------------
+
+        this.particleBurst = document.createElement("a-entity");
+        this.particleBurst.setAttribute("spe-particles", "");
+
+		this.particleBurst.setAttribute("spe-particles", "texture", "images/particles/sparkle.png");
+		this.particleBurst.setAttribute("spe-particles", "blending", "additive");
+		this.particleBurst.setAttribute("spe-particles", "distribution", "sphere");
+		this.particleBurst.setAttribute("spe-particles", "radius", 0.01);
+		
+		// particles both shrink and fade during last moments
+		this.particleBurst.setAttribute("spe-particles", "opacity", [1, 1, 1, 0]);
+		// this.particleBurst.setAttribute("spe-particles", "size", [1, 1, 1, 0]);
+		
+		let particleCount = Math.floor( randomUniform(100, 999) );
+		this.particleBurst.setAttribute("spe-particles", "particleCount", particleCount);
+
+		// change of particle burst vs. particle stream
+		if ( Math.random() < 0.80 )
+			this.particleBurst.setAttribute("spe-particles", "activeMultiplier", particleCount);
+		else
+			this.particleBurst.setAttribute("spe-particles", "activeMultiplier", particleCount/128);
+		
+		// note: when distribution = 'sphere', only first component of velocity vectors are used
+		let baseVelocity = randomUniform(1, 2);
+		this.particleBurst.setAttribute("spe-particles", "velocity", {"x":baseVelocity, "y":0, "z":0});
+		this.particleBurst.setAttribute("spe-particles", "velocitySpread", {"x":0.5, "y":0, "z":0});
+		this.particleBurst.setAttribute("spe-particles", "drag", 1.00);
+		this.particleBurst.setAttribute("spe-particles", "randomizeVelocity", true);
+		
+		// add a bit of gravity
+		this.particleBurst.setAttribute("spe-particles", "accelerationDistribution", "box");
+		this.particleBurst.setAttribute("spe-particles", "acceleration", {"x":0, "y":-0.2, "z":0});
+		this.particleBurst.setAttribute("spe-particles", "accelerationSpread", {"x":0, "y":0.2, "z":0});
+		
+		// how long will particles last?
+        this.burstDuration = randomUniform(1.0, 3.0);
+        this.particleBurst.setAttribute("spe-particles", "maxAge", this.burstDuration);
+        this.particleBurst.setAttribute("spe-particles", "maxAgeSpread", this.burstDuration/4);
+        // duration = maximum amount of time to emit particles;
+        //        	  should be less than smallest max age to prevent second burst
+		this.particleBurst.setAttribute("spe-particles", "duration", 0.5);
+
+		// default: steady color
+		let colorArray = ["white", this.data.color, this.data.color, this.data.color];
+		// random chance of color shifting
+		if ( Math.random() < 0.25 )
+		{
+			let color2 = this.data.color;
+			// make sure second color is different from first
+			while (color2 == this.data.color)
+			{
+				color2 = this.randomColor();
+			}
+			colorArray = ["white", this.data.color, color2, color2];
+		}
+        this.particleBurst.setAttribute("spe-particles", "color", colorArray);
+
+        // disable burst effect for now;
+        //   will be enabled (in tick method) after reaching max height
+		this.particleBurst.setAttribute("spe-particles", "enabled", false);
+
+  		this.el.appendChild(this.particleBurst);
+
+		this.elapsedTime = 0;
+		this.burstStart = false;
+
+		// audio effects
+		this.launchSound = document.getElementById("launchSound");
+		this.launchSound.components.sound.playSound();
+		if ( this.burstDuration < 1.6 || particleCount < 300 )
+			this.burstSound = document.getElementById("burst1Sound");
+		else if ( this.burstDuration < 2.4 )
+			this.burstSound = document.getElementById("burst2Sound");
+		else // this.burstDuration < 3.0
+			this.burstSound = document.getElementById("burst3Sound");
+	},
+	
+	tick: function(time, deltaTime)
+	{
+		this.elapsedTime += deltaTime/1000;
+
+		// firework has reached max height, start burst effect
+		if (this.elapsedTime > this.data.riseTime && this.burstStart == false)
+		{
+			this.burstStart = true;
+			this.particleBurst.setAttribute("spe-particles", "enabled", true);
+
+			this.el.removeChild( this.particleTrail );
+
+			this.burstSound.components.sound.playSound();
+		}
+
+		// firework finished; remove self from scene
+		//  need to take into account particle age variation (1.25 factor)
+		if (this.elapsedTime > this.data.riseTime + this.burstDuration * 1.25)
+		{
+			let element = this.el;
+      		element.parentNode.removeChild(element);
+		}
+	}
+});
+*/
+
+// runs when user clicks button
+AFRAME.registerComponent('start', 
+{
+	init: function()
+	{
+		// block pointer events until buttonEnter is clicked
+		let uiDiv = document.getElementById("uiDiv");
+		uiDiv.style["pointer-events"] = "auto";
+
+		// set up background blocker
+		uiDiv.style["background-color"] = "rgba(0, 0, 0, 0)";
+
+		// indicate clickable with hand cursor (desktop)
+		let buttonEnter = document.getElementById("buttonEnter");
+		buttonEnter.style.cursor = "pointer";
+
+		// fade-in functionality
+		let fadeIn = function()
+		{
+			// allow point events again
+			uiDiv.style["pointer-events"] = "none";
+
+			// sounds can only be triggered after a mouse interaction
+			let soundPlayer1 = document.querySelector("#audio1play");
+			soundPlayer1.components.sound.playSound();
+            let soundPlayer2 = document.querySelector("#audio2play");
+            soundPlayer2.components.sound.playSound();
+            let soundPlayer3 = document.querySelector("#audio3play");
+            soundPlayer3.components.sound.playSound();
+            let soundPlayer4 = document.querySelector("#audio4play");
+            soundPlayer4.components.sound.playSound();
+            let soundPlayer5 = document.querySelector("#audio5play");
+            soundPlayer5.components.sound.playSound();
+            let soundPlayer6 = document.querySelector("#audio6play");
+            soundPlayer6.components.sound.playSound();
+            let soundPlayer7 = document.querySelector("#audio7play");
+            soundPlayer7.components.sound.playSound();
+            let soundPlayer8 = document.querySelector("#audio8play");
+            soundPlayer8.components.sound.playSound();
+
+			// remove startButton
+			buttonEnter.parentNode.remove(buttonEnter);
+            
+            //play video
+            document.getElementById('video1').play();
+            document.getElementById('video2').play();
+            document.getElementById('video3').play();
+            document.getElementById('video4').play();
+            document.getElementById('video5').play();
+            document.getElementById('video6').play();
+            document.getElementById('video7').play();
+            document.getElementById('video8').play();
+            document.getElementById('video9').play();
+            document.getElementById('video10').play();
+
+			// fade out uiDiv background
+			uiDiv.style["background-color"] = "rgba(0, 0, 0, 0.0)";
+    		uiDiv.style["transition"] = "background-color 10ms linear";
+
+    		// activate the spawner
+		//	let camera = document.querySelector("#camera");
+		//	camera.setAttribute("spawner", "");
+		}
+
+		// activate for desktop/touchscreen
+		buttonEnter.addEventListener('touchstart', fadeIn);
+		buttonEnter.addEventListener('mousedown',  fadeIn);
+	}
+});
+</script>
+
+
+<a-scene background="black" start>
+	  
+      <a-assets>
+        <audio id="audio1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio2" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/2.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio3" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/3.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio4" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/4.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio5" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/5.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio6" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/6.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio7" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/7.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio8" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/8.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <video id="video1" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_1.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video2" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_2.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video3" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_3.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video4" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_4.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video5" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_5.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video6" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_6.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video7" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_7.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video8" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_8.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video9" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_9.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+        <video id="video10" preload="auto"
+               src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_10.mp4"
+               width="160" height="90" autoplay loop="true"
+               crossOrigin="anonymous" muted></video>
+      </a-assets>
+	
+	<a-entity id="camera" camera look-controls position="0 0 0" ></a-entity>
+	
+	<a-entity id="audio1play" sound="src: #audio1; loop: true;" position="-8 0 -12" rotation="0 -315 0"></a-entity>
+    
+    <a-entity id="audio2play" sound="src: #audio2; loop: true;" position="0 0 -12" rotation="0 0 0"></a-entity>
+    
+    <a-entity id="audio3play" sound="src: #audio3; loop: true;" position="8 0 -12" rotation="0 -45 0"></a-entity>
+    
+    <a-entity id="audio4play" sound="src: #audio4; loop: true;" position="8 0 0" rotation="0 -90 0"></a-entity>
+    
+    <a-entity id="audio5play" sound="src: #audio5; loop: true;" position="8 0 12" rotation="0 -135 0"></a-entity>
+    
+    <a-entity id="audio6play" sound="src: #audio6; loop: true;" position="0 0 12" rotation="0 -180 0"></a-entity>
+    
+    <a-entity id="audio7play" sound="src: #audio7; loop: true;" position="-8 0 12" rotation="0 -225 0"></a-entity>
+    
+    <a-entity id="audio8play" sound="src: #audio8; loop: true;" position="-8 0 0" rotation="0 -270 0"></a-entity>
+    
+    <a-entity
+              material="shader: flat; src: #video1"
+              geometry="primitive: plane; width: 160; height: 90;"
+              position="-160 0 -240"
+              rotation="0 0 0"
+              visible="true">
+    </a-entity>
+    
+    <a-entity material="shader: flat; src: #video2"
+              geometry="primitive: plane; width: 160; height: 90"
+              position="0 0 -240"
+              rotation="0 0 0"
+              visible="true">
+    </a-entity>
+    
+    <a-entity material="shader: flat; src: #video3"
+              geometry="primitive: plane; width: 160; height: 90"
+              position="80 0 -160"
+              rotation="0 -90 0"
+              visible="true">
+    </a-entity>
+    
+      <a-entity material="shader: flat; src: #video4"
+              geometry="primitive: plane; width: 160; height: 90"
+              position="80 0 0"
+              rotation="0 -90 0"
+              visible="true">
+    </a-entity>
+    
+      <a-entity material="shader: flat; src: #video5"
+              geometry="primitive: plane; width: 160; height: 90"
+              position="80 0 160"
+              rotation="0 -90 0"
+              visible="true">
+    </a-entity>
+    
+     <a-entity material="shader: flat; src: #video6"
+              geometry="primitive: plane; width: 160; height: 90"
+              position="0 0 240"
+              rotation="0 -180 0"
+              visible="true">
+    </a-entity>
+    
+    <a-entity material="shader: flat; src: #video7"
+              geometry="primitive: plane; width: 160; height: 90"
+              position="-160 0 240"
+              rotation="0 -180 0"
+              visible="true">
+    </a-entity>
+    
+    <a-entity material="shader: flat; src: #video8"
+              geometry="primitive: plane; width: 160; height: 90"
+              position="-240 0 160"
+              rotation="0 -270 0"
+              visible="true">
+    </a-entity>
+    
+    <a-entity material="shader: flat; src: #video9"
+              geometry="primitive: plane; width: 160; height: 90"
+              position="-240 0 0"
+              rotation="0 -270 0"
+              visible="true">
+    </a-entity>
+    
+    <a-entity material="shader: flat; src: #video10"
+              geometry="primitive: plane; width: 160; height: 90"
+              position="-240 0 -160"
+              rotation="0 -270 0"
+              visible="true">
+    </a-entity>
+	
+
+</a-scene>
+
+</body>
+</html>

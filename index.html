@@ -1,25 +1,94 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+   <meta charset="utf-8">
     <title>RML Video Viewer</title>
     <meta name="description" content="Video - A-Frame">
     <script src="dist/aframe-master.js"></script>
     <script src="js/play-on-click.js"></script>
     <script src="js/hide-on-play.js"></script>
-    <script src="./audio-toggle.js"></script>
+   <script src="js/audio-on-click.js"></script>
+  
   </head>
   <body>
-    <a-scene background="color: black">
+      <!-- div used for enter button (user interaction to trigger audio) and fade-in -->
+      <div class="mainUI" id="uiDiv" oncontextmenu="return false;">
+          <div class="regionUI">
+              <div class="buttonUI">
+              <img id="buttonEnter" />
+              </div>
+          </div>
+      </div>
+      <script>
+          AFRAME.registerComponent('start',
+          {
+              init: function()
+              {
+                  // block pointer events until buttonEnter is clicked
+                  let uiDiv = document.getElementById("uiDiv");
+                  uiDiv.style["pointer-events"] = "auto";
+
+                  // set up background blocker
+                  uiDiv.style["background-color"] = "rgba(0.5, 0, 0, 0.75)";
+
+                  // indicate clickable with hand cursor (desktop)
+                  let buttonEnter = document.getElementById("buttonEnter");
+                  buttonEnter.style.cursor = "pointer";
+
+                  // fade-in functionality
+                  let fadeIn = function()
+                  {
+                      // allow point events again
+                      uiDiv.style["pointer-events"] = "none";
+                      
+
+                      // sounds can only be triggered after a mouse interaction
+                   let soundPlayer = document.querySelector("#audio1test");
+                   soundPlayer.components.sound.playSound();
+                     
+                   //  sceneEl.querySelector('a-sound');
+                     //      let playing = false;
+                           //var el = document.querySelector('a-box');
+                       //    let audioEl = document.querySelector("#audio1test");
+                         //  var audio = audioEl.components.sound;
+                           // audioEl.addEventListener('click', () => {
+                           // if (!playing) {
+                           // audio.playSound();
+                           //} else {
+                           //audio.stopSound();
+                           //}
+                           //playing = !playing;
+                           //});
+
+
+                          
+                      
+                      // remove startButton
+                      buttonEnter.parentNode.remove(buttonEnter);
+
+                      // fade out uiDiv background
+                      uiDiv.style["background-color"] = "rgba(0, 0, 0, 0.0)";
+                      uiDiv.style["transition"] = "background-color 1000ms linear";
+
+                  }
+
+                  // activate for desktop/touchscreen
+                  buttonEnter.addEventListener('touchstart', fadeIn);
+                  buttonEnter.addEventListener('mousedown',  fadeIn);
+              }
+          });
+      </script>
+    <a-scene background="color: black" start>
+        
       <a-assets>
-        <audio id="audio1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg" loop="true" ></audio>
-        <audio id="audio2" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/2.ogg"></audio>
-        <audio id="audio3" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/3.ogg"></audio>
-        <audio id="audio4" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/4.ogg"></audio>
-        <audio id="audio5" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/5.ogg"></audio>
-        <audio id="audio6" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/6.ogg"></audio>
-        <audio id="audio7" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/7.ogg"></audio>
-        <audio id="audio8" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/8.ogg"></audio>
+        <audio id="audio1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio2" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/2.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio3" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/3.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio4" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/4.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio5" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/5.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio6" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/6.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio7" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/7.ogg" crossOrigin="anonymous" preload="auto"></audio>
+        <audio id="audio8" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/8.ogg" crossOrigin="anonymous" preload="auto"></audio>
         <video id="video1" preload="auto"
                src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_1.mp4"
                width="160" height="90" autoplay loop="true"
@@ -63,16 +132,27 @@
       </a-assets>
 
      
-      <a-entity material="shader: flat; src: #video1"
-                sound="src: #audio1; volume: 10;"
+      <a-entity
+                material="shader: flat; src: #video1"
                 geometry="primitive: plane; width: 160; height: 90;"
                 position="-160 0 -240"
                 rotation="0 0 0"
                 play-on-click
-                audio-toggle
                 visible="false">
       </a-entity>
-
+      
+      
+  <!--  <a-sound
+        position="0 0 0"
+        scale="1 1 1"
+        src="#audio1"
+        volume="1"
+        loop="true"
+        on="false"
+        ></a-sound> -->
+  
+    <a-sound id="audio1test" sound="src: #audio1; loop: true;"></a-sound>
+      
     
       <a-entity material="shader: flat; src: #video2"
                 geometry="primitive: plane; width: 160; height: 90"
@@ -148,11 +228,11 @@
       
      <!-- <a-entity sound="src: #audio1; volume: 1"
                 position="0 0 0"
-                rotation="0 45 0" scale="100 100 100" audio-toggle="playing: true" play-on-click loop="true"> -->
-      </a-entity>
+                rotation="0 45 0" scale="100 100 100" audio-toggle="playing: true" play-on-click loop="true">
+      </a-entity> -->
       
       <a-camera>
-        <a-entity
+       <!-- <a-entity
           position="0 0 -1.5"
           text="align: center;
                 width: 6;
@@ -160,8 +240,9 @@
                 color: white;
                 value: Click or tap to start video"
           hide-on-play="#video2">
-        </a-entity>
+        </a-entity> -->
       </a-camera>
     </a-scene>
+ 
   </body>
 </html>

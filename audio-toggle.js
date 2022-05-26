@@ -13,14 +13,6 @@ AFRAME.registerComponent('audio-toggle', {
     if (playing === true) {
       el.components.sound.playSound()
     }
-    el.addEventListener('click', () => {
-      if (playing) {
-        el.components.sound.pauseSound()
-        playing = false
-      } else {
-        el.components.sound.playSound()
-        playing = true
-      }
-    })
+    
   }
 })
