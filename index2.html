@@ -2,14 +2,15 @@
 <html>
 
 <head>
-	<title>RML Video Player Take 2</title>
+	<title></title>
 	<meta name="description" content="A-Frame Examples">
         <script src="dist/aframe-master.js"></script>
 
 
 <style>
     
-    #loading {
+#loadingClass
+    {
       position: fixed;
       display: flex;
       justify-content: center;
@@ -23,7 +24,8 @@
       z-index: 99;
     }
 
-    #loading-image {
+#loadingImage
+    {
       z-index: 100;
     }
 
@@ -61,11 +63,11 @@
 
 <!-- div used for enter button (user interaction to trigger audio) and fade-in -->
 
-<div id="loading">
-  <img id="loading-image" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/images/Spinner-2.gif" alt="Loading..." />
+<div id="loadingClass">
+  <img id="loadingImage" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/images/Spinner-2.gif" alt="Loading..." />
 </div>
 
-<div class="mainUI" id="uiDiv" oncontextmenu="return false;">
+ <div class="mainUI" id="uiDiv" oncontextmenu="return false;">
 	<div class="regionUI">
 		<div class="buttonUI">
     	<img src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/images/buttons/enter.png" id="buttonEnter" />
@@ -81,7 +83,13 @@ AFRAME.registerComponent('start',
 {
 	init: function()
 	{
-        this.el.AddEventListener("loaded")
+        // this.el.AddEventListener("loaded");
+        
+        // get rid of loading screen
+        let loadingScreen = document.getElementById("loadingClass");
+        loadingScreen.style["visibility"] = "hidden";
+       loadingScreen.style["transition"] = "visibility 10000ms linear";
+        
 		// block pointer events until buttonEnter is clicked
 		let uiDiv = document.getElementById("uiDiv");
 		uiDiv.style["pointer-events"] = "auto";
@@ -149,7 +157,7 @@ AFRAME.registerComponent('start',
 
 <a-scene loading-screen="dotsColor: white; backgroundColor: black" background="color: black" start>
 	  
-      <a-assets timeout="30000">
+      <a-assets timeout="10000">
         <audio id="audio1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg" crossOrigin="anonymous" preload="auto"></audio>
         <audio id="audio2" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/2.ogg" crossOrigin="anonymous" preload="auto"></audio>
         <audio id="audio3" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/3.ogg" crossOrigin="anonymous" preload="auto"></audio>
@@ -291,11 +299,6 @@ AFRAME.registerComponent('start',
 	
 
 </a-scene>
-<script language="JavaScript" type="text/javascript" src="/js/jquery-3.6.0.min.js"
-          $(window).on('load', function () {
-            $('#loading').hide();
-          })>
-          
-    </script>
+
 </body>
 </html>
