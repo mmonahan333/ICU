@@ -1,21 +1,133 @@
 <!DOCTYPE html><html>
  <head>
+     <style type="text/css">
+         .ctrl-btn button {
+             width:80px;
+         }
+         .progress {
+             width: 100%; /* Full-width */
+             appearance: none;
+             border-radius: 5px;
+             height: 5px;
+             background: #d3d3d3; /* Grey background */
+             outline: none;
+         }
+         #video {
+             display:inline;
+         }
+     </style>
 <script src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/dist/aframe-master.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/js/popcorn.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/js/popcorn_videosync.js"></script>
-<style>#loadingClass{ position: fixed; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.7; background-color: #fff; z-index: 99;}#loadingImage{ z-index: 100;}.mainUI{position: fixed;top: 0px;width:100%; height:100%;z-index: 1;pointer-events: none;display: flex;align-items: center; justify-content: center;}.regionUI{position: absolute;display: flex;flex-direction: row;pointer-events: none;}.buttonUI{display: flex;flex-direction: column;justify-content: center;pointer-events: auto;}</style>
+<!-- <script src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/js/popcorn.js"></script>
+<script src="js/popcorn_videosync.js"></script> -->
+
+<!-- <script text="javascript" src="https://mcorp.no/lib/mediasync.js"></script> -->
+
+<script text="javascript" src="js/molmediasync.js"></script>
+
+<script type="module">
+    
+    import {
+            TimingObject,
+            TimingSampler,
+            TimingProgress
+        } from "https://webtiming.github.io/timingsrc/lib/timingsrc-esm-v3.js";
+
+    // timing object
+    const to = new TimingObject({range:[0,210]});
+
+    // Hook up buttons UI
+    document.getElementById("reset").onclick = function () {
+        to.update({position:0});
+    };
+    document.getElementById("pause").onclick = function () {
+        to.update({velocity:0});
+    };
+    document.getElementById("play").onclick = function () {
+        to.update({velocity:1});
+    };
+    document.getElementById("reverse").onclick = function () {
+        to.update({velocity:-1});
+    };
+
+    // refresh position every 100 ms
+    const sampler = new TimingSampler(to, {period:100});
+
+    // position
+    const pos_elem = document.getElementById("position");
+    sampler.on("change", function () {
+        pos_elem.innerHTML = `${to.pos.toFixed(2)}`;
+    });
+
+    // progress
+    const progress_elem = document.getElementById("progress");
+    const progress = new TimingProgress(to,
+                                        progress_elem,              {sampler:sampler});
+    
+    // Set up video sync
+    const sync1 = MCorp.mediaSync(document.getElementById("#v1"), to);
+
+    // Set up video sync
+    const sync2 = MCorp.mediaSync(document.getElementById("#v2"), to);
+
+    window.to = to;
+
+    
+
+
+</script>
+<!-- <style>#loadingClass{ position: fixed; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.7; background-color: #fff; z-index: 99;}#loadingImage{ z-index: 100;}.mainUI{position: fixed;top: 0px;width:100%; height:100%;z-index: 1;pointer-events: none;display: flex;align-items: center; justify-content: center;}.regionUI{position: absolute;display: flex;flex-direction: row;pointer-events: none;}.buttonUI{display: flex;flex-direction: column;justify-content: center;pointer-events: auto;}</style> -->
+
  </head>
  <body>
-<div id="loadingClass"> <img id="loadingImage" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/images/Spinner-2.gif" alt="Loading..." /></div>
+<!-- <div id="loadingClass"> <img id="loadingImage" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/images/Spinner-2.gif" alt="Loading..." /></div>
 <div class="mainUI" id="uiDiv" oncontextmenu="return false;">
  <div class="regionUI">
 <div class="buttonUI"><img src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/images/buttons/enter.png" id="buttonEnter" /></div>
  </div>
 </div>
-<script src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/js/playeverything.js">"
-</script>
-<a-scene loading-screen="backgroundColor: black" background="color: black" start>
+<script src="js/playeverything.js">
+</script> -->
+<!-- <script>
+   // wait for DOM to load
+   document.addEventListener('DOMContentLoaded', function () {
+     // popcorn events are chainable this means that you can also do:
+     // p.play(); or p.footnote{};
+     // Make a popcorn instance, passing the id of the video element.
+     // notice the <video id='video' ... > at the bottom of the page.
+     var vd1 = Popcorn('#v1')
+     .play();
+   }, false);
+
+
+ </script> -->
+<p>
+<div>
+      Position: <span id="position" style="color:red;"></span>
+  </div>
+  <div class="ctrl-btn">
+   <button id="reset" style="color:black;">Reset</button>
+      <button id="play">Play</button>
+      <button id="pause">Pause</button>
+      <button id="reverse">Reverse</button>
+  </div>
+</p>
+<p>
+  <input type="range" min="0" max="100" value="0" id="progress" class="progress">
+      </p>
+      
+      <video id="v1" preload="auto"src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_1.mp4"width="160" height="90" loop="true" autoplay crossOrigin="anonymous" ></video>
+      <video id="v2" preload="auto" src="assets/ICU_2.webm" width="160" height="90" loop="true" autoplay crossOrigin="anonymous" ></video>
+      
+ <!-- <style>
+  #embeddedScene {
+    width:100%;
+    height:800px;
+  }
+</style>
+<div id="embeddedScene">
+<a-scene embedded loading-screen="backgroundColor: black" background="color: black" start>
  <a-assets timeout="10000">
+     
 <audio id="a1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg" crossOrigin="anonymous" preload="auto"></audio>
 <audio id="a2" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/2.ogg" crossOrigin="anonymous" preload="auto"></audio>
 <audio id="a3" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/3.ogg" crossOrigin="anonymous" preload="auto"></audio>
@@ -24,8 +136,8 @@
 <audio id="a6" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/6.ogg" crossOrigin="anonymous" preload="auto"></audio>
 <audio id="a7" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/7.ogg" crossOrigin="anonymous" preload="auto"></audio>
 <audio id="a8" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/8.ogg" crossOrigin="anonymous" preload="auto"></audio>
-<video id="v1" preload="auto"src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_1.mp4"width="160" height="90" loop="true"crossOrigin="anonymous" ></video>
-<video id="v2" preload="auto"src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_2.mp4"width="160" height="90" loop="true"crossOrigin="anonymous" ></video>
+<video id="v1" preload="auto"src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_1.mp4"width="160" height="90" loop="true" autoplay crossOrigin="anonymous" ></video>
+<video id="v2" preload="auto" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_2.mp4" width="160" height="90" loop="true" autoplay crossOrigin="anonymous" ></video>
 <video id="v3" preload="auto"src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_3.mp4"width="160" height="90" loop="true"crossOrigin="anonymous" ></video>
 <video id="v4" preload="auto"src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_4.mp4"width="160" height="90" loop="true"crossOrigin="anonymous" ></video>
 <video id="v5" preload="auto"src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_5.mp4"width="160" height="90"loop="true"crossOrigin="anonymous" ></video>
@@ -54,6 +166,9 @@
  <a-entity material="shader: flat; src: #v8" geometry="primitive: plane; width: 160; height: 90" position="-240 0 160" rotation="0 -270 0" ></a-entity>
  <a-entity material="shader: flat; src: #v9" geometry="primitive: plane; width: 160; height: 90" position="-240 0 0" rotation="0 -270 0" ></a-entity>
  <a-entity material="shader: flat; src: #v10" geometry="primitive: plane; width: 160; height: 90" position="-240 0 -160" rotation="0 -270 0" ></a-entity>
-</a-scene>
+     </a-scene>
+ 
+ -->
+</div>
  </body>
 </html>

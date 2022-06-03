@@ -27,8 +27,8 @@ AFRAME.registerComponent('start', {
             let soP8 = document.querySelector("#a8p");
             soP8.components.sound.playSound();
             buttonEnter.parentNode.remove(buttonEnter);
-            document.getElementById('v1').play();
-            document.getElementById('v2').play();
+            /* document.getElementById('v1').play();
+             /* document.getElementById('v2').play();
             document.getElementById('v3').play();
             document.getElementById('v4').play();
             document.getElementById('v5').play();
@@ -36,11 +36,16 @@ AFRAME.registerComponent('start', {
             document.getElementById('v7').play();
             document.getElementById('v8').play();
             document.getElementById('v9').play();
-            document.getElementById('v10').play();
+            document.getElementById('v10').play(); */
+            // PLUGIN: Video Sync
+
+            
+
             uiDiv.style["background-color"] = "rgba(0, 0, 0, 0.0)";
             uiDiv.style["transition"] = "background-color 10ms linear";
         }
         buttonEnter.addEventListener('touchstart', fadeIn);
         buttonEnter.addEventListener('mousedown', fadeIn);
+        
     }
 });

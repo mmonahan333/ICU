@@ -111,7 +111,7 @@
     // With requestAnimationFrame, we can ensure that as
     // frequently as the browser would allow,
     // the video is resync'ed.
-    function syncb() {
+    function sync() {
       if (videos.b.media.readyState === 4) {
         videos.b.currentTime(
           videos.a.currentTime()
@@ -120,9 +120,9 @@
       requestAnimationFrame(syncb);
     }
 
-    sync();
+
     
-    function syncc() {
+  /*  function syncc() {
       if (videos.c.media.readyState === 4) {
         videos.c.currentTime(
           videos.a.currentTime()
@@ -131,7 +131,7 @@
       requestAnimationFrame(syncc);
     }
 
-    sync();
+    syncc();
     
     function syncd() {
       if (videos.d.media.readyState === 4) {
@@ -142,7 +142,7 @@
       requestAnimationFrame(syncd);
     }
 
-    sync();
+    syncd();
     
     function synce() {
       if (videos.e.media.readyState === 4) {
@@ -153,7 +153,7 @@
       requestAnimationFrame(synce);
     }
 
-    sync();
+    synce();
     
     function syncf() {
       if (videos.f.media.readyState === 4) {
@@ -164,7 +164,7 @@
       requestAnimationFrame(syncf);
     }
 
-    sync();
+    syncf();
     
     function syncg() {
       if (videos.g.media.readyState === 4) {
@@ -175,7 +175,7 @@
       requestAnimationFrame(syncg);
     }
 
-    sync();
+    syncg();
     
     function synch() {
       if (videos.h.media.readyState === 4) {
@@ -186,7 +186,7 @@
       requestAnimationFrame(synch);
     }
 
-    sync();
+    synch();
     
     function synci() {
       if (videos.i.media.readyState === 4) {
@@ -197,7 +197,7 @@
       requestAnimationFrame(synci);
     }
 
-    sync();
+    synci();
     
     function syncj() {
       if (videos.j.media.readyState === 4) {
@@ -208,6 +208,17 @@
       requestAnimationFrame(syncj);
     }
 
-    sync();
+    syncj(); */
+    
+    document.addEventListener('DOMContentLoaded', function () {
+      // popcorn events are chainable this means that you can also do:
+      // p.play(); or p.footnote{};
+      // Make a popcorn instance, passing the id of the video element.
+      // notice the <video id='video' ... > at the bottom of the page.
+        videos.a.autoplay(true);
+      sync();
+    }, false);
+
+    
     
 })( Popcorn );
