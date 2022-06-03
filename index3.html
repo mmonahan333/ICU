@@ -2,6 +2,8 @@
 <html>
 <head>
     <script src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/dist/aframe-master.js"></script>
+    <script src="https://unpkg.com/aframe-ambisonic-component"></script>
+  <script src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/aframe-ambisonic-component-master/examples/scripts/play-on-window-click.js"></script>
     <style type="text/css">
         .ctrl-btn button {
             width:80px;
@@ -30,25 +32,28 @@
         // timing object
         const to = new TimingObject({range:[0,209]});
         
-        // selecting all sounds
-        var sounds = document.querySelector('[sound]');
-        console.log(sounds);
-        var audio1 = document.getElementById("a1");
-        console.log(audios);
+        //ambisonic test
+       // var aO = document.getElementById('a1');
+       // aO.crossOrigin = "anonymous";
+      //  var ambi = document.getElementById('ambisonic');
+      //  console.log(ambi);
+     //   var components = this.el.components;
 
         // Hook up buttons UI
         document.getElementById("reset").onclick = function () {
             to.update({position:0});
             to.update({velocity:0});
-            sounds.components.sound.stopSound();
+           
         };
         document.getElementById("pause").onclick = function () {
             to.update({velocity:0});
-            sounds.components.sound.pauseSound();
+
         };
         document.getElementById("play").onclick = function () {
             to.update({velocity:1});
-            sounds.components.sound.playSound();
+           // ambi.components.ambisonic.playSound();
+           // aO.play();
+
         };
        /* document.getElementById("reverse").onclick = function () {
             to.update({velocity:-1});
@@ -61,7 +66,6 @@
         const pos_elem = document.getElementById("position");
         sampler.on("change", function () {
             pos_elem.innerHTML = `${to.pos.toFixed(2)}`;
-            audios.currentTime = `${to.pos.toFixed(2)}`;
         });
 
         // progress
@@ -119,19 +123,23 @@
         <source src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_2.webm" type="video/webm" />
         <source src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_2.mp4" type="video/mp4" />
     </video>
-   <!-- <audio id="a1" crossOrigin="anonymous" preload="auto" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg">
-        </audio> -->
-   
-   <audio id="a1" crossOrigin="anonymous" preload="auto" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/combined.ogg">
+  <audio id="a1" crossorigin="anonymous" preload="auto" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg">
         </audio>
+   
+   <!--   <audio id="a1" crossorigin="anonymous" preload="auto">
+       <source src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/combined.ogg">
+           </source>
+        </audio>-->
 </a-assets>
  <a-entity id="camera" camera wasd-controls look-controls position="0 0 0" ></a-entity>
  <!-- <a-entity  id="a1p" position="-8 0 -12" sound="src: #a1">
  </a-entity> -->
  <a-ambisonic
      id="ambisonic"
-     sources="#a1"
+     src="#a1"
      order="3"
+     channel-map="FuMa"
+     play-on-window-click
  ></a-ambisonic>
  <a-entity material="shader: flat; src: #v1" geometry="primitive: plane; width: 160; height: 90;" position="-160 0 -240" rotation="0 0 0" ></a-entity>
  <a-entity material="shader: flat; src: #v2" geometry="primitive: plane; width: 160; height: 90" position="0 0 -240" rotation="0 0 0" ></a-entity>
