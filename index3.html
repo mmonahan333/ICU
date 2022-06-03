@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/dist/aframe-master.js"></script>
     <style type="text/css">
         .ctrl-btn button {
             width:80px;
         }
-        .progress {
-            width: 100%; /* Full-width */
+     .progress {
+            width: 100%;
             appearance: none;
             border-radius: 5px;
             height: 5px;
-            background: #d3d3d3; /* Grey background */
+            background: #d3d3d3;
             outline: none;
         }
         #video {
@@ -19,7 +20,7 @@
     </style>
     <script text="javascript" src="js/molmediasync.js"></script>
     <script type="module">
-
+        
         import {
                 TimingObject,
                 TimingSampler,
@@ -28,20 +29,30 @@
 
         // timing object
         const to = new TimingObject({range:[0,209]});
+        
+        // selecting all sounds
+        var sounds = document.querySelector('[sound]');
+        console.log(sounds);
+        var audio1 = document.getElementById("a1");
+        console.log(audios);
 
         // Hook up buttons UI
         document.getElementById("reset").onclick = function () {
             to.update({position:0});
+            to.update({velocity:0});
+            sounds.components.sound.stopSound();
         };
         document.getElementById("pause").onclick = function () {
             to.update({velocity:0});
+            sounds.components.sound.pauseSound();
         };
         document.getElementById("play").onclick = function () {
             to.update({velocity:1});
+            sounds.components.sound.playSound();
         };
-        document.getElementById("reverse").onclick = function () {
+       /* document.getElementById("reverse").onclick = function () {
             to.update({velocity:-1});
-        };
+        }; */
 
         // refresh position every 100 ms
         const sampler = new TimingSampler(to, {period:100});
@@ -50,6 +61,7 @@
         const pos_elem = document.getElementById("position");
         sampler.on("change", function () {
             pos_elem.innerHTML = `${to.pos.toFixed(2)}`;
+            audios.currentTime = `${to.pos.toFixed(2)}`;
         });
 
         // progress
@@ -58,34 +70,35 @@
                                             progress_elem,              {sampler:sampler});
         
         // Set up video sync
-        const sync1 = MCorp.mediaSync(document.getElementById('player1'), to);
+        const sync1 = MCorp.mediaSync(document.getElementById('v1'), to);
 
         // Set up video sync
-        const sync2 = MCorp.mediaSync(document.getElementById('player2'), to);
+        const sync2 = MCorp.mediaSync(document.getElementById('v2'), to);
         
-        // Set up video sync
-        const sync3 = MCorp.mediaSync(document.getElementById('a1'), to);
+        // Set up audio sync
+       // const sync3 = MCorp.mediaSync(document.getElementById('a1'), to);
 
         window.to = to;
         
+        
 
     </script>
-    <script src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/dist/aframe-master.js"></script>
+
 
 </head>
 <body>
     <p>
-        <div>
+       <!-- <div>
             Position: <span id="position" style="color:red;"></span>
-        </div>
+        </div> -->
         <div class="ctrl-btn">
-            <button id="reset">Reset</button>
+            <button id="reset">Stop</button>
             <button id="play">Play</button>
             <button id="pause">Pause</button>
-            <button id="reverse">Reverse</button>
+           <!-- <button id="reverse">Reverse</button> -->
         </div>
     </p>
-    <p>
+   <p>
         <input type="range" min="0" max="100" value="0" id="progress" class="progress">
     </p>
 </body>
@@ -98,15 +111,31 @@
 <div id="embeddedScene">
 <a-scene embedded loading-screen="backgroundColor: black" background="color: black" start>
  <a-assets timeout="100">
-    <video id="player1" style="width:49%" autoplay>
-        <source src="assets/ICU_1.webm" type="video/webm" />
+    <video id="v1" autoplay crossOrigin="anonymous">
+        <source src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_1.webm" type="video/webm" />
         <source src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_1.mp4" type="video/mp4" />
     </video>
-    <video id="player2" style="width:49%" autoplay>
-        <source src="assets/ICU_2.webm" type="video/webm" />
+    <video id="v2" autoplay crossOrigin="anonymous">
+        <source src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_2.webm" type="video/webm" />
         <source src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/ICU_2.mp4" type="video/mp4" />
     </video>
-    <audio id="a1" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg" crossOrigin="anonymous" preload="auto"></audio>
+   <!-- <audio id="a1" crossOrigin="anonymous" preload="auto" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/1.ogg">
+        </audio> -->
+   
+   <audio id="a1" crossOrigin="anonymous" preload="auto" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/assets/audio/combined.ogg">
+        </audio>
 </a-assets>
-
+ <a-entity id="camera" camera wasd-controls look-controls position="0 0 0" ></a-entity>
+ <!-- <a-entity  id="a1p" position="-8 0 -12" sound="src: #a1">
+ </a-entity> -->
+ <a-ambisonic
+     id="ambisonic"
+     sources="#a1"
+     order="3"
+ ></a-ambisonic>
+ <a-entity material="shader: flat; src: #v1" geometry="primitive: plane; width: 160; height: 90;" position="-160 0 -240" rotation="0 0 0" ></a-entity>
+ <a-entity material="shader: flat; src: #v2" geometry="primitive: plane; width: 160; height: 90" position="0 0 -240" rotation="0 0 0" ></a-entity>
+</a-scene>
+</div>
+ </body>
 </html>
