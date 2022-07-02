@@ -20,7 +20,91 @@
         }
     </style>
     <script text="javascript" src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/js/molmediasync.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/mmonahan333/ICU/js/play-on-click.js" type="module">
+    <script type="module">
+        
+        import {
+                TimingObject,
+                TimingSampler,
+                TimingProgress
+            } from "https://webtiming.github.io/timingsrc/lib/timingsrc-esm-v3.js";
+
+        // timing object
+        const to = new TimingObject({range:[0,209]});
+
+        //ambisonic test
+        var ambi = document.getElementById('a1');
+        console.log(ambi);
+
+
+
+        // Hook up buttons UI
+        document.getElementById("reset").onclick = function () {
+            to.update({position:0});
+            to.update({velocity:0});
+           
+        };
+        document.getElementById("pause").onclick = function () {
+            to.update({velocity:0});
+
+        };
+        document.getElementById("play").onclick = function () {
+            to.update({velocity:1});
+           // ambi.el.components.ambisonic.playSound();
+          //ambi.entity.setAttribute('sound',play);
+        ambi.playSound();
+
+        };
+
+
+        // refresh position every 100 ms
+        const sampler = new TimingSampler(to, {period:100});
+
+        // position
+        const pos_elem = document.getElementById("position");
+        sampler.on("change", function () {
+            pos_elem.innerHTML = `${to.pos.toFixed(2)}`;
+        });
+
+        // progress
+        const progress_elem = document.getElementById("progress");
+        const progress = new TimingProgress(to,
+                                            progress_elem,              {sampler:sampler});
+
+        // Set up video sync
+        const sync1 = MCorp.mediaSync(document.getElementById('v1'), to);
+
+        // Set up video sync
+        const sync2 = MCorp.mediaSync(document.getElementById('v2'), to);
+
+        // Set up video sync
+        const sync3 = MCorp.mediaSync(document.getElementById('v3'), to);
+
+        // Set up video sync
+        const sync4 = MCorp.mediaSync(document.getElementById('v4'), to);
+
+        // Set up video sync
+        const sync5 = MCorp.mediaSync(document.getElementById('v5'), to);
+
+        // Set up video sync
+        const sync6 = MCorp.mediaSync(document.getElementById('v6'), to);
+
+        // Set up video sync
+        const sync7 = MCorp.mediaSync(document.getElementById('v7'), to);
+
+        // Set up video sync
+        const sync8 = MCorp.mediaSync(document.getElementById('v8'), to);
+
+        // Set up video sync
+        const sync9 = MCorp.mediaSync(document.getElementById('v9'), to);
+
+        // Set up video sync
+        const sync10 = MCorp.mediaSync(document.getElementById('v10'), to);
+
+        //Set up audio sync
+        const sync11 = MCorp.mediaSync(document.getElementById('a1'), to);
+
+        window.to = to;
+
     
     </script>
 
@@ -105,7 +189,7 @@
  <a-entity material="shader: flat; src: #v7" geometry="primitive: plane; width: 160; height: 90" position="-160 0 240" rotation="0 -180 0" ></a-entity>
  <a-entity material="shader: flat; src: #v8" geometry="primitive: plane; width: 160; height: 90" position="-240 0 160" rotation="0 -270 0" ></a-entity>
  <a-entity material="shader: flat; src: #v9" geometry="primitive: plane; width: 160; height: 90" position="-240 0 0" rotation="0 -270 0" ></a-entity>
- <a-entity material="shader: flat; src: #v10" geometry="primitive: plane; width: 160; height: 90" position="-240 0 -160" rotation="-240 0 -160" ></a-entity>
+ <a-entity material="shader: flat; src: #v10" geometry="primitive: plane; width: 160; height: 90" position="-240 0 -160" rotation="0 -270 0" ></a-entity>
  <a-camera
         id="camera"
         look-controls
